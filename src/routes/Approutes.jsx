@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Home from "../pages/Home";
 import CommonRoute from "../components/CommonRoute";
 import PageNotFound from "../pages/PageNotFound";
+import Signup from "../pages/Signup";
 
 const Approutes = () => {
   return (
@@ -10,6 +11,7 @@ const Approutes = () => {
       <Route path="/" element={<CommonRoute />}>
         <Route path="/" element={<Home />} />
       </Route>
+      <Route path="/signup" element={<Signup />} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
