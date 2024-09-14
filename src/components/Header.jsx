@@ -15,7 +15,6 @@ const Header = ({ initials }) => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      console.log(!menuRef.current.contains(event.target));
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         closeMenu();
       }
