@@ -1,10 +1,70 @@
-import React from "react";
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { AdminLogin, UserLogin } from "../utils/api";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Login = () => {
+  const [showpassword, setShowPassword] = useState(false);
+  const [username, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
+
+  const loginData = async (event) => {
+    event.preventDefault();
+    // console.log(role, username, email, password);
+    const formData = { username, email, password };
+    try {
+      if (role === "admin") {
+        await AdminLogin(formData);
+        toast("Admin Logged In Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      } else if (role === "user") {
+        await UserLogin(formData);
+        toast("User Logged In Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setUserName("");
+      setPassword("");
+      setEmail("");
+      setRole("");
+    }
+  };
+
+  const togglePassword = () => {
+    setShowPassword(!showpassword);
+  };
+
   return (
     <div className="h-screen flex justify-center items-center">
-      <form className="rounded-[8px] flex gap-[20px] flex-col shadow-sm py-[20px] px-[50px] w-[500px] border">
+      <form
+        onSubmit={loginData}
+        autoComplete="off"
+        className="rounded-[8px] flex gap-[20px] flex-col shadow-sm py-[20px] px-[50px] w-[500px] border"
+      >
         <div className="flex flex-col gap-3">
           <p className="text-center font-bold text-2xl">
             Welcome to BlogPostingApp{" "}
@@ -16,12 +76,15 @@ const Login = () => {
             <input
               type="text"
               name="name"
+              value={username}
+              onChange={(e) => setUserName(e.target.value)}
+              autoComplete="new-name"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
             />
             <label
-              htmlFor ="name"
+              htmlFor="name"
               className="absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-blue-600"
             >
               Name
@@ -31,6 +94,9 @@ const Login = () => {
             <input
               type="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="new-email"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
@@ -44,8 +110,11 @@ const Login = () => {
           </div>
           <div className="relative z-0 w-full mb-6 group">
             <input
-              type="text"
+              type={showpassword ? "text" : "password"}
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               required
@@ -56,14 +125,26 @@ const Login = () => {
             >
               Password
             </label>
+
+            <div className="absolute inset-y-0 right-0 flex items-center px-2">
+              <button
+                type="button"
+                className="text-gray-600 focus:outline-none"
+                onClick={togglePassword}
+              >
+                {showpassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
           <div className="relative z-0 w-full mb-6 group">
             <select
               name="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               required
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Select Role
               </option>
               <option value="admin">Admin</option>
@@ -91,6 +172,7 @@ const Login = () => {
           </p>
         </div>
       </form>
+      <ToastContainer />
     </div>
   );
 };

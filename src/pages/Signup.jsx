@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import { UserSignup } from "../utils/api";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [showpassword, setShowPassword] = useState(false);
 
   const signupData = async (event) => {
     event.preventDefault();
@@ -37,9 +39,14 @@ const Signup = () => {
     }
   };
 
+  const togglePassword = () => {
+    setShowPassword(!showpassword);
+  };
+
   return (
     <div className="h-screen flex justify-center items-center">
       <form
+        autoComplete="off"
         onSubmit={signupData}
         className="rounded-[8px] flex gap-[20px] flex-col shadow-sm py-[20px] px-[50px] w-[500px] border"
       >
@@ -57,6 +64,7 @@ const Signup = () => {
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               value={username}
+              autoComplete="new-username"
               onChange={(e) => setUserName(e.target.value)}
               required
             />
@@ -71,6 +79,7 @@ const Signup = () => {
             <input
               type="email"
               name="email"
+              autoComplete="new-email"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               value={email}
@@ -86,11 +95,12 @@ const Signup = () => {
           </div>
           <div className="relative z-0 w-full mb-6 group">
             <input
-              type="text"
+              type={showpassword ? "text" : "password"}
               name="password"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               value={password}
+              autoComplete="new-password"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
@@ -100,6 +110,16 @@ const Signup = () => {
             >
               Password
             </label>
+
+            <div className="absolute inset-y-0 right-0 flex items-center px-2">
+              <button
+                type="button"
+                onClick={togglePassword}
+                className="text-gray-600 focus:outline-none"
+              >
+                {showpassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
           </div>
           <div className="relative z-0 w-full mb-6 group">
             <input
@@ -108,6 +128,7 @@ const Signup = () => {
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               placeholder=" "
               value={role}
+              autoComplete="new-designation"
               onChange={(e) => setRole(e.target.value)}
               required
             />
