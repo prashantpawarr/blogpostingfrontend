@@ -10,14 +10,28 @@ export async function UserSignup(formData) {
 }
 
 export async function UserLogin(formData) {
-  const response = await fetch("http://localhost:3001/user/signin", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
-  return response;
+  try {
+    const response = await fetch("http://localhost:3001/user/signin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.token) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", formData.username);
+      return { success: true, token: data.token };
+    } else {
+      return { success: false, message: data.message || "Login Failed" };
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    return { success: false, message: "Something went wrong" };
+  }
 }
 
 export async function AdminLogin(formData) {

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserSignup } from "../utils/api";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -11,6 +11,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
   const [showpassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const signupData = async (event) => {
     event.preventDefault();
@@ -29,6 +30,9 @@ const Signup = () => {
         theme: "light",
         transition: Bounce,
       });
+      setTimeout(() => {
+        navigate("/login");
+      }, 5000);
     } catch (err) {
       console.log(err, "User not Created");
     } finally {
