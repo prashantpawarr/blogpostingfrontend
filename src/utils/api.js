@@ -44,3 +44,14 @@ export async function AdminLogin(formData) {
   });
   return response;
 }
+
+export async function SubmitBlog(formData) {
+  const response = await fetch("http://localhost:3001/user/blogs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(formData),
+  });
+  return response;
+}
