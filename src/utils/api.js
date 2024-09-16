@@ -46,12 +46,15 @@ export async function AdminLogin(formData) {
 }
 
 export async function SubmitBlog(formData) {
+  const token = localStorage.getItem("token");
+
   const response = await fetch("http://localhost:3001/user/blogs", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(formData),
+    body: formData, 
   });
+
   return response;
 }

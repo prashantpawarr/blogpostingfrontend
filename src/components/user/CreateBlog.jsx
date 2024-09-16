@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { SubmitBlog } from "../../utils/api";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 
@@ -7,37 +7,38 @@ const CreateBlog = () => {
   const [content, setContent] = useState("");
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-    setImages(files);
-  };
+  const fileInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    let imagesPath;
-    images.map((e, i) => {
-      imagesPath = e.name;
+    // Create a FormData object to handle file uploads
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+
+    // Loop through the images array and append each image file
+    Array.from(images).forEach((image) => {
+      formData.append("images", image);
     });
 
-    const BlogData = { title, content, imagesPath };
-    console.log(BlogData);
-
     try {
-      // await SubmitBlog(BlogData);
-      toast("Blog Submitted Successfully", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      const submitBlogs = await SubmitBlog(formData);
+
+      if (submitBlogs.ok) {
+        toast("Blog Submitted Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Bounce,
+        });
+      }
     } catch (error) {
       toast.error("Blog Not Submitted", {
         position: "top-right",
@@ -52,6 +53,13 @@ const CreateBlog = () => {
       });
     } finally {
       setLoading(false);
+      setTitle("");
+      setContent("");
+      setImages([]);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     }
   };
 
@@ -92,7 +100,8 @@ const CreateBlog = () => {
           <input
             type="file"
             id="images"
-            onChange={handleImageChange}
+            ref={fileInputRef}
+            onChange={(e) => setImages(e.target.files)}
             multiple
             accept="image/*"
             className="block w-full mt-2 text-sm text-gray-500"

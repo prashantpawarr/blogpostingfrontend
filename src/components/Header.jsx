@@ -9,7 +9,6 @@ const Header = () => {
   const location = useLocation();
 
   const showSearchBarPaths = ["/", "/home", "/blogs"];
-  const hideSearchBarPaths = ["/login", "/signup", "/createblog"];
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -20,10 +19,15 @@ const Header = () => {
   };
 
   useEffect(() => {
+    const token = localStorage.getItem("token"); 
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
+    
+    if (token && storedUser) {
       setIsLoggedIn(true);
       setUserName(storedUser);
+    } else {
+      setIsLoggedIn(false);
+      setUserName(""); 
     }
   }, []);
 
@@ -103,17 +107,18 @@ const Header = () => {
 
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
-                    <a
+                    <Link
                       onClick={() => {
                         localStorage.removeItem("user");
                         localStorage.removeItem("token");
                         setIsLoggedIn(false);
+                        setUserName("");
                       }}
-                      href="#"
+                      to={"/"}
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-200"
                     >
                       Sign Out
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>
