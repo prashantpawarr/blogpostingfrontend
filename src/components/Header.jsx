@@ -6,6 +6,7 @@ const Header = () => {
   const menuRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUserName] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false); // Track if the user is an admin
   const location = useLocation();
 
   const showSearchBarPaths = ["/", "/home", "/blogs"];
@@ -19,15 +20,23 @@ const Header = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
-    
-    if (token && storedUser) {
+    const storedAdmin = localStorage.getItem("admin");
+
+    if (token && (storedUser || storedAdmin)) {
       setIsLoggedIn(true);
-      setUserName(storedUser);
+      if (storedAdmin) {
+        setUserName(storedAdmin); // Set admin username if admin is logged in
+        setIsAdmin(true); // Set isAdmin to true if it's an admin
+      } else if (storedUser) {
+        setUserName(storedUser); // Set user username if user is logged in
+        setIsAdmin(false); // Set isAdmin to false for normal users
+      }
     } else {
       setIsLoggedIn(false);
-      setUserName(""); 
+      setUserName("");
+      setIsAdmin(false);
     }
   }, []);
 
@@ -67,7 +76,14 @@ const Header = () => {
         <div className="flex items-center space-x-6">
           {isLoggedIn ? (
             <>
-              {location.pathname === "/createblog" ? (
+              {isAdmin ? (
+                location.pathname === "/admin-dashboard" ? (
+                  <Link to={"/"}>Home</Link>
+                ) : (
+                  <Link to={"/admin-dashboard"}>Dashboard</Link>
+                )
+              ) : 
+              location.pathname === "/createblog" ? (
                 <Link to={"/"}>Home</Link>
               ) : (
                 <Link to={"/createblog"} className="flex gap-2 group">
@@ -110,9 +126,11 @@ const Header = () => {
                     <Link
                       onClick={() => {
                         localStorage.removeItem("user");
+                        localStorage.removeItem("admin");
                         localStorage.removeItem("token");
                         setIsLoggedIn(false);
                         setUserName("");
+                        setIsAdmin(false);
                       }}
                       to={"/"}
                       className="block px-4 py-2 text-gray-800 hover:bg-gray-200"

@@ -8,6 +8,8 @@ function App() {
   useEffect(() => {
     const handleTabClose = () => {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
     };
 
     const checkToken = () => {

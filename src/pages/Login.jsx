@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { AdminLogin, UserLogin } from "../utils/api";
-import { Bounce, toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+import { SuccessToast } from "../components/SuccessToast";
+import { ErrorToast } from "../components/ErrorToast";
 
 const Login = () => {
   const [showpassword, setShowPassword] = useState(false);
@@ -19,76 +20,38 @@ const Login = () => {
 
     try {
       let result;
-      if (role === "admin") {
-        result = await AdminLogin(formData);
-        if (result.success) {
-          toast("Admin Logged In Successfully", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
-          navigate("/");
-        } else {
-          toast.error(result.message || "Admin Login Failed", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
-        }
-      } else if (role === "user") {
+      if (role === "user") {
         result = await UserLogin(formData);
         if (result.success) {
-          toast("User Logged In Successfully", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
-          navigate("/");
-        } else {
-          toast.error(result.message || "User Login Failed", {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            transition: Bounce,
-          });
+          SuccessToast("User Logged In Successfully!");
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
         }
+        // if (result.ok) {
+        //   SuccessToast("User Logged In Successfully!");
+        //   navigate("/");
+        // } else {
+        //   ErrorToast("User Login Failed");
+        // }
+      } else if (role === "admin") {
+        result = await AdminLogin(formData);
+        if (result.success) {
+          SuccessToast("Admin Logged In Successfully");
+          setTimeout(() => {
+            navigate("/");
+          }, 2000);
+        }
+        // if (result.ok) {
+        //   SuccessToast("Admin Logged In Successfully");
+        //   navigate("/");
+        // } else {
+        //   ErrorToast("Admin Login Failed");
+        // }
       }
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong, please try again later", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Bounce,
-      });
+      ErrorToast("Something went wrong, please try again later");
     } finally {
       setUserName("");
       setPassword("");
