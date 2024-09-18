@@ -1,45 +1,56 @@
 import React, { useEffect, useRef, useState } from "react";
+import { CgProfile } from "react-icons/cg";
 import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUserName] = useState("");
+  const [username, setUsername] = useState("");
   const [isAdmin, setIsAdmin] = useState(false); // Track if the user is an admin
   const location = useLocation();
 
   const showSearchBarPaths = ["/", "/home", "/blogs"];
 
+  // Toggle menu for desktop dropdown
   const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => !prev);
   };
 
+  // Toggle mobile menu visibility
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen((prev) => !prev);
+  };
+
+  // Close the menu
   const closeMenu = () => {
     setMenuOpen(false);
   };
 
+  // Handle login state and set user/admin based on localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     const storedAdmin = localStorage.getItem("admin");
 
-    if (token && (storedUser || storedAdmin)) {
+    if (token) {
       setIsLoggedIn(true);
       if (storedAdmin) {
-        setUserName(storedAdmin); // Set admin username if admin is logged in
-        setIsAdmin(true); // Set isAdmin to true if it's an admin
+        setUsername(storedAdmin); // Admin username
+        setIsAdmin(true); // Mark as admin
       } else if (storedUser) {
-        setUserName(storedUser); // Set user username if user is logged in
-        setIsAdmin(false); // Set isAdmin to false for normal users
+        setUsername(storedUser); // User username
+        setIsAdmin(false); // Mark as user
       }
     } else {
       setIsLoggedIn(false);
-      setUserName("");
+      setUsername("");
       setIsAdmin(false);
     }
   }, []);
 
+  // Close the menu if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -53,17 +64,19 @@ const Header = () => {
     };
   }, [menuRef]);
 
+  // Conditionally show search bar based on path
   const shouldShowSearchBar = showSearchBarPaths.includes(location.pathname);
 
   return (
     <nav className="bg-white shadow-sm">
-      <div className="container mx-auto px-8 py-4 flex justify-between items-center">
-        <div className="flex gap-9">
-          <div className="text-2xl font-bold">
+      <div className="container mx-auto px-6 md:px-8 py-4 flex justify-between items-center">
+        {/* Logo and Search bar section */}
+        <div className="flex items-center gap-4">
+          <div className="text-xl md:text-2xl font-bold">
             <span>Blog Posting App</span>
           </div>
           {shouldShowSearchBar && (
-            <div className="relative">
+            <div className="relative hidden md:block">
               <input
                 type="text"
                 placeholder="Search"
@@ -73,7 +86,50 @@ const Header = () => {
             </div>
           )}
         </div>
-        <div className="flex items-center space-x-6">
+
+        {/* Hamburger Menu for Mobile */}
+        <div className="md:hidden">
+          <button
+            onClick={toggleMobileMenu}
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            className="focus:outline-none"
+          >
+            {isMobileMenuOpen ? (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                ></path>
+              </svg>
+            ) : (
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                ></path>
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {/* Links for Desktop */}
+        <div className="hidden md:flex items-center space-x-6">
           {isLoggedIn ? (
             <>
               {isAdmin ? (
@@ -82,8 +138,7 @@ const Header = () => {
                 ) : (
                   <Link to={"/admin-dashboard"}>Dashboard</Link>
                 )
-              ) : 
-              location.pathname === "/createblog" ? (
+              ) : location.pathname === "/createblog" ? (
                 <Link to={"/"}>Home</Link>
               ) : (
                 <Link to={"/createblog"} className="flex gap-2 group">
@@ -110,7 +165,6 @@ const Header = () => {
                   </p>
                 </Link>
               )}
-
               <div className="relative" ref={menuRef}>
                 {username && (
                   <button
@@ -120,16 +174,13 @@ const Header = () => {
                     {username.charAt(0).toUpperCase()}
                   </button>
                 )}
-
                 {menuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-20">
                     <Link
                       onClick={() => {
-                        localStorage.removeItem("user");
-                        localStorage.removeItem("admin");
-                        localStorage.removeItem("token");
+                        localStorage.clear();
                         setIsLoggedIn(false);
-                        setUserName("");
+                        setUsername("");
                         setIsAdmin(false);
                       }}
                       to={"/"}
@@ -143,15 +194,52 @@ const Header = () => {
             </>
           ) : (
             <>
-              <Link to="/signup" className="text-sm font-semibold">
-                Sign Up
-              </Link>
-              <Link to="/login" className="text-sm font-semibold">
-                Login
+              <Link to="/signup" className="text-[32px] font-semibold">
+                <CgProfile />
               </Link>
             </>
           )}
         </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-md">
+            <ul className="flex flex-col items-center space-y-4 py-4">
+              {isLoggedIn ? (
+                <>
+                  {isAdmin ? (
+                    location.pathname === "/admin-dashboard" ? (
+                      <Link to={"/"}>Home</Link>
+                    ) : (
+                      <Link to={"/admin-dashboard"}>Dashboard</Link>
+                    )
+                  ) : location.pathname === "/createblog" ? (
+                    <Link to={"/"}>Home</Link>
+                  ) : (
+                    <Link to={"/createblog"}>Write</Link>
+                  )}
+                  <Link
+                    onClick={() => {
+                      localStorage.clear();
+                      setIsLoggedIn(false);
+                      setUsername("");
+                      setIsAdmin(false);
+                    }}
+                    to={"/"}
+                  >
+                    Sign Out
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/signup">
+                    <CgProfile />
+                  </Link>
+                </>
+              )}
+            </ul>
+          </div>
+        )}
       </div>
     </nav>
   );

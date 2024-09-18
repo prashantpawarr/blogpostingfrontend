@@ -4,23 +4,15 @@ import { GetAllBlogs } from "../utils/api";
 const Home = () => {
   const [blogs, setBlogs] = useState([]);
 
-  useEffect(() => {
-    const getBlogs = async () => {
-      const blogsdata = await GetAllBlogs();
-      setBlogs(blogsdata);
-    };
-    getBlogs();
-  }, []);
+  // useEffect(() => {
+  //   const getBlogs = async () => {
+  //     const blogsdata = await GetAllBlogs();
+  //     setBlogs(blogsdata);
+  //   };
+  //   getBlogs();
+  // }, []);
 
-  return (
-    <div>
-      {blogs.map((e, i) => (
-        <div key={i}>
-          <h1>{e.title}</h1>;
-        </div>
-      ))}
-    </div>
-  );
+  return <>Hello</>;
 };
 
 export default Home;
