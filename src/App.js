@@ -1,12 +1,38 @@
-import './App.css';
+import React, { useEffect } from "react";
+import Approutes from "./routes/Approutes";
+import { useNavigate } from "react-router-dom";
+
 
 function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleTabClose = () => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("admin");
+    };
+
+    const checkToken = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        navigate("/");
+      }
+    };
+
+    checkToken();
+
+    window.addEventListener("beforeunload", handleTabClose);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+    };
+  }, []);
+
   return (
-    <div className="App">
-      <h1 className="text-3xl text-cyan-400 font-bold underline">
-        Hello world!
-      </h1>
-    </div>
+    <>
+      <Approutes />
+    </>
   );
 }
 
