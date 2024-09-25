@@ -5,7 +5,7 @@ import { Bounce, toast, ToastContainer } from "react-toastify";
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState();
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -17,11 +17,7 @@ const CreateBlog = () => {
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);
-
-    // Loop through the images array and append each image file
-    Array.from(images).forEach((image) => {
-      formData.append("images", image);
-    });
+    formData.append("file", images);
 
     try {
       const submitBlogs = await SubmitBlog(formData);
@@ -101,8 +97,7 @@ const CreateBlog = () => {
             type="file"
             id="images"
             ref={fileInputRef}
-            onChange={(e) => setImages(e.target.files)}
-            multiple
+            onChange={(e) => setImages(e.target.files[0])}
             accept="image/*"
             className="block w-full mt-2 text-sm text-gray-500"
           />
