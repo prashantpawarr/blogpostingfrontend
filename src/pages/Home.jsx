@@ -8,6 +8,7 @@ const Home = () => {
     const getBlogs = async () => {
       const blogsdata = await GetAllBlogs();
       setBlogs(blogsdata);
+      console.log(blogs);
     };
     getBlogs();
   }, []);
@@ -19,7 +20,10 @@ const Home = () => {
           <div key={i}>
             <h2>{e.title}</h2>
             <p>{e.content}</p>
-            <img src={e.images[0]?.url} alt="blogImage" />
+            <img
+              src={"http://localhost:3001/images/" + e.image}
+              alt="blogImage"
+            />
           </div>
         ))}
       </section>
