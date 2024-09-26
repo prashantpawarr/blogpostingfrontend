@@ -13,7 +13,6 @@ const CreateBlog = () => {
     e.preventDefault();
     setLoading(true);
 
-    // Create a FormData object to handle file uploads
     const formData = new FormData();
     formData.append("title", title);
     formData.append("content", content);

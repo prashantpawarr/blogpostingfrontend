@@ -13,9 +13,29 @@ const Signup = () => {
   const [showpassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const avatarImages = [
+    "/images/bee.png",
+    "/images/boy-one.png",
+    "/images/boy-two.png",
+    "/images/girl-one.png",
+    "/images/girl-two.png",
+    "/images/girl-three.png",
+    "/images/panda.png",
+    "/images/sponge-box.png",
+    "/images/boy-three.jpg",
+    "/images/girl-four.jpg",
+  ];
+
+  const [selectedAvatar, setSelectedAvatar] = useState(avatarImages[0]);
+
+  const handleImage = (avatar) => {
+    setSelectedAvatar(avatar);
+  };
+
   const signupData = async (event) => {
     event.preventDefault();
-    const formData = { username, email, password, role };
+
+    const formData = { username, email, password, role, selectedAvatar };
 
     try {
       await UserSignup(formData);
@@ -142,6 +162,27 @@ const Signup = () => {
             >
               Designation
             </label>
+          </div>
+          <div className="flex flex-col gap-2 z-0 w-full mb-4">
+            <h2 className="text-lg text-black font-medium ">
+              Select your Avatar
+            </h2>
+            <div className="grid grid-cols-5 gap-2">
+              {avatarImages &&
+                avatarImages.map((avatar, index) => (
+                  <img
+                    key={index}
+                    className={`${
+                      selectedAvatar === avatar
+                        ? "border-red-600 border-[4px]"
+                        : "none"
+                    } w-14 h-14 rounded-full cursor-pointer hover:border-red-600 hover:border-[4px]`}
+                    src={avatar}
+                    alt="avatar"
+                    onClick={() => handleImage(avatar)}
+                  />
+                ))}
+            </div>
           </div>
           <button className="bg-black text-white font-medium text-lg w-full py-2">
             Sign Up

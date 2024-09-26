@@ -8,16 +8,15 @@ const Home = () => {
   useEffect(() => {
     const getBlogs = async () => {
       const blogsdata = await GetAllBlogs();
+      console.log(blogsdata);
       setBlogs(blogsdata);
     };
     getBlogs();
-    console.log(blogs);
   }, []);
 
   return (
     <>
       <section className="lg:grid lg:grid-cols-3 gap-5 px-[105px]">
-        {/* <img src={"http://localhost:3001/images/" + e.image} alt="blogImage" /> */}
         {blogs.map((blog, i) => (
           <div key={i}>
             <div
@@ -61,12 +60,14 @@ const Home = () => {
                   <div className="h-[53px]">
                     <img
                       className="h-full rounded-[50px]"
-                      src=""
+                      src={blog.author.image}
                       alt="authorAvatar"
                     />
                   </div>
                   <div>
-                    <p className="text-[14px] font-normal">Author Name</p>
+                    <p className="text-[14px] font-normal">
+                      {blog.author.username}
+                    </p>
                   </div>
                 </Link>
               </div>

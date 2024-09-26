@@ -28,12 +28,6 @@ const Login = () => {
             navigate("/");
           }, 2000);
         }
-        // if (result.ok) {
-        //   SuccessToast("User Logged In Successfully!");
-        //   navigate("/");
-        // } else {
-        //   ErrorToast("User Login Failed");
-        // }
       } else if (role === "admin") {
         result = await AdminLogin(formData);
         if (result.success) {
@@ -42,12 +36,6 @@ const Login = () => {
             navigate("/");
           }, 2000);
         }
-        // if (result.ok) {
-        //   SuccessToast("Admin Logged In Successfully");
-        //   navigate("/");
-        // } else {
-        //   ErrorToast("Admin Login Failed");
-        // }
       }
     } catch (err) {
       console.error(err);

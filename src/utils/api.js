@@ -20,10 +20,12 @@ export async function UserLogin(formData) {
     });
 
     const data = await response.json();
+    console.log(data.avatar);
 
     if (response.ok && data.token) {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", formData.username);
+      localStorage.setItem("avatar", data.avatar);
       return { success: true, token: data.token };
     } else {
       return { success: false, message: data.message || "Login Failed" };
